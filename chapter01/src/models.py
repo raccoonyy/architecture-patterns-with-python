@@ -1,9 +1,27 @@
+from dataclasses import dataclass
+
+
+@dataclass(frozen=True)
 class OrderLine:
-    pass
+    ref_id: str
+    product: str
+    qty: int
 
 
 class Batch:
-    pass
+    def __init__(self, reference, sku, qty, eta):
+        self.reference = reference
+        self.sku = sku
+        self.qty = qty
+        self.eta = eta
+        self.lines = set()
+
+    def allocate(self, line: OrderLine):
+        self.lines.add(line)
+
+    @property
+    def available_quantity(self):
+        return self.qty - sum([line.qty for line in self.lines])
 
 
 def allocate():
