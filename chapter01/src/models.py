@@ -33,38 +33,14 @@ class Batch:
     def available_quantity(self):
         return self.qty - sum([line.qty for line in self.lines])
 
+    def __gt__(self, other: 'Batch'):
+        if self.eta is None or self.eta < other.eta:
+            return False
+        return True
+
 
 def allocate(line, batches):
-    def sort_batches():
-        sorted_batches = [batch for batch in batches if batch.eta is None]
-        if len(sorted_batches) == 0:
-            sorted_batches.append(batches[0])
-
-        for batch in batches:
-            if batch in sorted_batches:
-                continue
-
-            for idx, s_batch in enumerate(sorted_batches):
-                if s_batch.eta is None:
-                    continue
-
-                if batch.eta is None:
-                    sorted_batches.append(batch)
-                    break
-
-                if batch.eta < s_batch.eta:
-                    sorted_batches.insert(idx, batch)
-                    break
-
-                if idx == len(sorted_batches) - 1:
-                    sorted_batches.append(batch)
-                    break
-
-        return sorted_batches
-
-    sorted_batches = sort_batches()
-
-    for batch in sorted_batches:
+    for batch in sorted(batches):
         if batch.can_allocate(line):
             batch.allocate(line)
             return batch.reference
