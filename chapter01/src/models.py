@@ -38,4 +38,4 @@ def allocate(line, batches):
     for batch in batches:
         if batch.eta is None and batch.can_allocate(line):
             batch.allocate(line)
-            break
+            return batch.reference
