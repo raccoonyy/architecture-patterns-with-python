@@ -19,6 +19,10 @@ class Batch:
     def allocate(self, line: OrderLine):
         self.lines.add(line)
 
+    def deallocate(self, line: OrderLine):
+        if line in self.lines:
+            self.lines.remove(line)
+
     def can_allocate(self, line: OrderLine):
         if self.sku != line.sku or \
                 self.available_quantity < line.qty:
