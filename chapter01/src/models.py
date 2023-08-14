@@ -35,7 +35,36 @@ class Batch:
 
 
 def allocate(line, batches):
-    for batch in batches:
-        if batch.eta is None and batch.can_allocate(line):
+    def sort_batches():
+        sorted_batches = [batch for batch in batches if batch.eta is None]
+        if len(sorted_batches) == 0:
+            sorted_batches.append(batches[0])
+
+        for batch in batches:
+            if batch in sorted_batches:
+                continue
+
+            for idx, s_batch in enumerate(sorted_batches):
+                if s_batch.eta is None:
+                    continue
+
+                if batch.eta is None:
+                    sorted_batches.append(batch)
+                    break
+
+                if batch.eta < s_batch.eta:
+                    sorted_batches.insert(idx, batch)
+                    break
+
+                if idx == len(sorted_batches) - 1:
+                    sorted_batches.append(batch)
+                    break
+
+        return sorted_batches
+
+    sorted_batches = sort_batches()
+
+    for batch in sorted_batches:
+        if batch.can_allocate(line):
             batch.allocate(line)
             return batch.reference
