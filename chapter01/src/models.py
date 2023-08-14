@@ -4,7 +4,7 @@ from dataclasses import dataclass
 @dataclass(frozen=True)
 class OrderLine:
     ref_id: str
-    product: str
+    sku: str
     qty: int
 
 
@@ -20,7 +20,8 @@ class Batch:
         self.lines.add(line)
 
     def can_allocate(self, line: OrderLine):
-        if self.available_quantity < line.qty:
+        if self.sku != line.sku or \
+                self.available_quantity < line.qty:
             return False
         return True
 
