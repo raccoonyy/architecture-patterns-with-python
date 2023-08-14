@@ -34,5 +34,8 @@ class Batch:
         return self.qty - sum([line.qty for line in self.lines])
 
 
-def allocate():
-    pass
+def allocate(line, batches):
+    for batch in batches:
+        if batch.eta is None and batch.can_allocate(line):
+            batch.allocate(line)
+            break
