@@ -1,4 +1,5 @@
 from collections import namedtuple
+from copy import deepcopy
 from dataclasses import dataclass
 from typing import NamedTuple
 
@@ -48,18 +49,22 @@ def test_Money는_숫자와_곱할_수_있다():
 
 def test_Money끼리는_곱할_수_없다():
     with pytest.raises(TypeError):
-        tenner & fiver
+        tenner * fiver
 
 
 class Person:
     def __init__(self, name: Name):
         self.name = name
 
+    def __eq__(self, other: "Person"):
+        return self.name == other.name
+
 
 def test_barry는_harry다():
     harry = Person(Name('Harry', 'Percival'))
-    barry = harry
+    barry = deepcopy(harry)
 
-    barry.name = Name('Barry', 'Percival')
+    # barry.name = Name('Barry', 'Percival')
 
-    assert harry is barry and barry is harry
+    assert harry == barry and barry == harry
+    assert harry is not barry
