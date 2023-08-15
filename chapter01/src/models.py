@@ -1,6 +1,10 @@
 from dataclasses import dataclass
 
 
+class 예외_재고없음(Exception):
+    pass
+
+
 @dataclass(frozen=True)
 class OrderLine:
     ref_id: str
@@ -44,3 +48,5 @@ def allocate(line, batches):
         if batch.can_allocate(line):
             batch.allocate(line)
             return batch.reference
+
+    raise 예외_재고없음(f'{line.sku} 재고 없음')

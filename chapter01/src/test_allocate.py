@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
-from models import Batch, OrderLine, allocate
+import pytest
+from models import Batch, OrderLine, allocate, 예외_재고없음
 
 today = datetime.now()
 tomorrow = today + timedelta(days=1)
@@ -39,3 +40,11 @@ def test_배치는_reference를_리턴한다():
     allocation = allocate(line, [in_stock_batch, shipment_batch])
 
     assert allocation == in_stock_batch.reference
+
+
+def test_재고가_없으면_재고없음_예외가_발생한다():
+    batch = Batch('batch1', 'SMALL-FORK', 10, eta=today)
+    allocate(OrderLine('order1', 'SMALL-FORK', 10), [batch])
+
+    with pytest.raises(예외_재고없음, match='SMALL-FORK'):
+        allocate(OrderLine('order2', 'SMALL-FORK', 1), [batch])
